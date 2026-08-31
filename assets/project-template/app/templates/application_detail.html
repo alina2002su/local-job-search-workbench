@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block heading %}{{app.company}} · {{app.position}}{% endblock %}
+{% block content %}
+<a class="back" href="/applications">← 返回投递管理</a>
+<section class="detail-hero"><div><div class="badges"><span class="chip blue">{{app.current_status}}</span><span class="urgency {{app.urgency.key}}">{{app.urgency.icon}} {{app.urgency.label}}</span></div><h2>{{app.position}}</h2><p>{{app.business or '业务线待补'}} · {{app.city or '城市待补'}} · 投递于 {{app.applied_date or '待补'}}</p></div>{% if app.source_url %}<a class="ghost" href="{{app.source_url}}" target="_blank">原岗位链接 ↗</a>{% endif %}</section>
+<form method="post" action="/applications/{{app.id}}/update" class="edit-bar detail-edit-bar">
+  <label>公司<input name="company" value="{{app.company}}" required></label>
+  <label>岗位<input name="position" value="{{app.position}}" required></label>
+  <label>业务线<input name="business" value="{{app.business}}" placeholder="填写业务线 / 部门"></label>
+  <label>城市<input name="city" value="{{app.city}}" placeholder="填写城市"></label>
+  <label>投递日期<input type="date" name="applied_date" value="{{app.applied_date or ''}}"></label>
+  <label>当前进度<select name="current_status">{% for s in statuses %}<option {% if app.current_status==s %}selected{% endif %}>{{s}}</option>{% endfor %}</select></label>
+  <label>下一安排<select name="next_action"><option value="">待确定</option>{% for s in statuses %}<option value="{{s}}" {% if app.next_action==s %}selected{% endif %}>{{s}}</option>{% endfor %}</select></label>
+  <label>安排时间 / DDL<input type="datetime-local" name="next_event_at" value="{{app.next_event_at[:16] if app.next_event_at else ''}}"></label>
+  <label>投递简历<select name="resume_path"><option value="">未绑定</option>{% for r in resumes %}<option value="{{r.path}}" {% if app.resume_path==r.path %}selected{% endif %}>{{r.name}}</option>{% endfor %}</select></label>
+  <button class="primary">保存全部信息</button><p class="readonly-note">手动保存的公司、岗位、业务线和城市会被锁定，后续 JD 重新扫描不会覆盖；完整 JD 始终只读。</p>
+  <section class="detail-grid main-detail"><article class="panel jd"><div class="panel-head"><h2>完整 JD</h2><span class="source-state">{% if app.jd_missing %}⚠ JD源文件缺失{% else %}只读 · 本地 JD库{% endif %}</span></div><pre>{{app.jd_content or '暂无 JD 内容'}}</pre></article><aside><article class="panel"><h2>招聘时间轴</h2><div class="timeline">{% for h in history %}<div><span></span><p><b>{{h.new_status}}</b><small>{{h.changed_at[:16].replace('T',' ')}}</small></p></div>{% endfor %}</div></article><article class="panel"><h2>当前 To-do</h2>{% for t in todos if t.status=='pending' %}<div class="mini-task"><span>○</span><div><b>{{t.title}}</b><small>{{t.due_at[:16].replace('T',' ') if t.due_at else '待补时间'}}</small></div></div>{% else %}<div class="empty">暂无待办</div>{% endfor %}</article></aside></section>
+  <section class="split"><article class="panel"><div class="panel-head"><div><span class="section-kicker">面试准备</span><h2>个人笔记与复盘</h2></div></div><textarea name="prep_content" rows="12" placeholder="岗位核心职责、专业问题、公司业务、行为面试、个人答案、面试复盘……">{{app.prep_content}}</textarea></article><article class="panel"><div class="panel-head"><div><span class="section-kicker">无需 API Key</span><h2>生成面试准备 Prompt</h2></div><button type="button" class="ghost" data-copy="#prep-prompt">复制 Prompt</button></div><textarea id="prep-prompt" rows="12" readonly>{{prompt}}</textarea></article></section>
+  <article class="panel"><h2>备注</h2><textarea name="notes" rows="4" placeholder="记录招聘沟通、特殊事项……">{{app.notes}}</textarea></article>
+</form>
+{% endblock %}

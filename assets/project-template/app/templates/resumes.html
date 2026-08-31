@@ -1,0 +1,2 @@
+{% extends 'base.html' %}{% block heading %}简历库{% endblock %}{% block content %}<div class="page-intro"><p>只读扫描指定简历目录。不会修改、删除或上传任何文件。</p><span class="path-pill">{{settings.resume_directory}}</span></div><div class="resume-grid">{% for r in rows %}<article class="resume-card"><span class="file-icon">{{r.type}}</span><div><h2>{{r.name}}</h2><p>{{r.type}} · 修改于 {{r.modified}}</p></div><a class="ghost" href="/resumes/open?path={{r.path|urlencode}}">打开文件</a></article>{% else %}<div class="panel empty">简历目录中暂无 PDF 或 DOCX 文件。</div>{% endfor %}</div>{% endblock %}
+

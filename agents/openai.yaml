@@ -1,0 +1,4 @@
+interface:
+  display_name: "本地求职工作台搭建器"
+  short_description: "从零搭建可联动飞书与 JD Clipper 的本地求职工作台"
+  default_prompt: "Use $local-job-search-workbench to build a private local job-search workbench for me."

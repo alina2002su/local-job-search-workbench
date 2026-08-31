@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>本地求职工作台 JD Clipper</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="brand">
+      <img src="icons/icon48.png" alt="" width="42" height="42">
+      <div><strong>本地求职工作台</strong><span>JD Clipper</span></div>
+      <i id="connectionDot" class="connection" aria-label="连接状态"></i>
+    </header>
+
+    <section id="offlineCard" class="notice offline" hidden>
+      <strong>本地求职工作台尚未启动</strong>
+      <p>请先运行项目中的启动脚本</p>
+      <button id="retryButton" class="secondary" type="button">重试连接</button>
+    </section>
+
+    <section class="page-card">
+      <span class="eyebrow">当前页面</span>
+      <strong id="pageTitle">正在获取页面信息…</strong>
+      <span id="pageUrl" class="url"></span>
+    </section>
+
+    <section class="properties-card">
+      <div class="properties-title"><span>保存属性</span><small>可在保存前确认</small></div>
+      <label class="description-field">
+        <span>description</span>
+        <textarea id="descriptionInput" rows="3" maxlength="500" placeholder="写下投递备注、岗位亮点或需要关注的信息…"></textarea>
+      </label>
+      <div class="property-row"><span>source</span><strong id="sourceValue"></strong></div>
+      <div class="property-row"><span>created</span><strong id="createdValue"></strong></div>
+      <div class="property-row"><span>存放路径</span><strong id="savePathValue">连接后读取</strong></div>
+    </section>
+
+    <section id="resultCard" class="result" hidden>
+      <span class="check">✓</span>
+      <div><strong id="resultTitle">JD 已保存</strong><span id="resultCompany"></span><span id="resultPosition"></span><small id="resultFile"></small></div>
+    </section>
+
+    <section id="fallbackCard" class="notice" hidden>
+      <strong>未能完整识别岗位内容</strong>
+      <p>可先在网页中选中 JD 内容后重新保存，或直接保存当前页面原始文本。</p>
+      <button id="rawButton" class="secondary" type="button">保存当前页面原始文本</button>
+    </section>
+
+    <p id="statusText" class="status" aria-live="polite"></p>
+    <button id="saveButton" class="primary" type="button">保存 JD</button>
+    <button id="openButton" class="secondary full" type="button">打开本地求职工作台</button>
+    <p class="privacy">仅在点击保存后读取当前页面，数据只发送到本机。</p>
+  </main>
+  <script src="utils.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

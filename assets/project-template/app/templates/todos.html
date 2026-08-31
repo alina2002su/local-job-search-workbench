@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block heading %}To-do{% endblock %}
+{% block content %}
+<div class="page-intro"><p>当前进度、下一安排和安排时间 / DDL 会自动更新行动任务。</p></div>
+{% if request.query_params.get('created') %}<p class="section-note">✓ 任务已添加，并已按截止时间归入对应分组。</p>{% endif %}
+<form id="add-todo" class="inline-form" method="post" action="/todos/add"><input name="title" placeholder="任务名称（必填）" required><select name="application_id"><option value="">不关联岗位</option>{% for a in applications %}<option value="{{a.id}}">{{a.company}} · {{a.position}}</option>{% endfor %}</select><input type="datetime-local" name="due_at"><button class="primary" type="submit">创建任务</button></form>
+{% for name,rows in groups.items() %}
+<section class="todo-group"><div class="section-title"><h2>{{name}}</h2><span>{{rows|length}}</span></div><div class="panel task-list">
+{% for t in rows %}
+<div class="task-swipe" data-todo-row>
+  <form class="todo-delete-form" method="post" action="/todos/{{t.id}}/delete" data-confirm-delete data-preserve-scroll><button class="todo-delete-action" type="submit" aria-label="删除待办：{{t.title}}">删除</button></form>
+  <div class="task" data-todo-card>
+    <form method="post" action="/todos/{{t.id}}/complete" data-preserve-scroll><button class="check {% if t.status=='completed' %}checked{% endif %}" aria-label="{% if t.status=='completed' %}取消完成{% else %}完成待办{% endif %}：{{t.title}}" aria-pressed="{% if t.status=='completed' %}true{% else %}false{% endif %}"></button></form>
+    <a href="{% if t.application_id %}/applications/{{t.application_id}}{% else %}#{% endif %}"><b>{{t.title}}</b><small>{{t.company or '个人任务'}}{% if t.current_status %} · {{t.current_status}}{% endif %}{% if t.auto_generated %} · 自动联动{% else %} · 手动{% endif %}</small></a>
+    <span>{{t.due_at[:16].replace('T',' ') if t.due_at else '待补时间'}}</span><em class="urgency {{t.urgency.key}}">{{t.urgency.icon}} {{t.urgency.label}}</em>
+    <button class="todo-more" type="button" data-todo-menu aria-label="显示删除操作" title="删除待办">•••</button>
+  </div>
+</div>
+{% else %}<div class="empty">这一组暂时没有任务</div>{% endfor %}
+</div></section>
+{% endfor %}
+{% endblock %}
